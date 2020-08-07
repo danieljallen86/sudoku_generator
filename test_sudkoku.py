@@ -4,7 +4,8 @@
 
 
 import unittest
-from sudoku import check_sudoku_sol, works_in_spot, make_sudoku_board, puzzle_seed, make_grid
+from sudoku import works_in_spot, make_sudoku_board, puzzle_seed, make_grid
+from check_sudoku import check_sudoku_sol
 
 
 class MyTestCase(unittest.TestCase):

@@ -4,7 +4,6 @@
 
 
 import random
-import math
 
 
 def make_grid():
@@ -23,35 +22,6 @@ def puzzle_seed():
     random.shuffle(seed)
 
     return seed
-
-
-def check_sudoku_sol(sol):
-    """
-    Checks if the sudoku board is correct
-    :param sol: completed board (list of list)
-    :return: if the solution is valid (bool)
-    """
-    # determine the size of the sections
-    # side = int(math.sqrt(len(sol)))
-
-    # check every spot on board
-    for row in range(len(sol)):
-        for column in range(len(sol[row])):
-            val = sol[row][column]  # value to check
-            # calculate the section
-            i = (row // 3) * 3  # beginning row of section
-            j = (column // 3) * 3  # beginning column of section
-            section = sol[i][j:j + 3] + sol[i + 1][j:j + 3] + sol[i + 2][j:j + 3]
-
-            b_row = sol[row]
-            b_col = [x[column] for x in sol]
-            section = sol[i][i:i + 3] + sol[i + 1][i:i + 3] + sol[i + 2][i:i + 3]
-
-            # there can only be one instance of val in the row column and section
-            if b_row.count(val) != 1 or b_col.count(val) != 1 or section.count(val) != 1:
-                return False
-
-    return True
 
 
 def works_in_spot(grid, row, col, digit):
@@ -93,8 +63,8 @@ def make_sudoku_board(grid, seed, sudoku=None):
                     # if a digit in works in a spot
                     if works_in_spot(grid, row, col, digit):
                         grid[row][col] = digit  # assign the digit to that spot
-                        all_rows = grid[0] + grid[1] + grid[2] + grid[3] + grid[4] + \
-                                   grid[5] + grid[6] + grid[7] + grid[8]
+                        all_rows = grid[0] + grid[1] + grid[2] + grid[3] + \
+                            grid[4] + grid[5] + grid[6] + grid[7] + grid[8]
                         # if there are still open spots on the grid
                         if 0 in all_rows:
                             # go back through function
@@ -110,11 +80,68 @@ def make_sudoku_board(grid, seed, sudoku=None):
                 return sudoku
 
 
-def remove_spots(board, difficulty):
+def pick_empty_spots(difficulty):
     """
-    Given a sudoku solution, this will remove values to create a puzzle
-    :param board: filled sudoku board
-    :param difficulty: how hard the puzzle should be on a scale from 1 (easy) - 4 (expert)
-    :return: a partially filled sudoku board (list of lists)
+    Generate spots to remove from a filled sudoku board
+    :param difficulty: how hard the puzzle should be on a scale from 1 (easy) - 5 (evil) (int)
+    :return: a partially filled sudoku board (list of tuples)
     """
-    pass
+    levels = {1: 35, 2: random.randint(36, 46), 3: random.randint(47, 50),
+              4: random.randint(50, 53), 5: random.randint(54, 64)}
+
+    empty_spots = set()
+
+    # randomly pick a spot within the range of the 9x9 sudoku
+    while len(empty_spots) < levels[difficulty]:
+        spot = (random.randint(0, 8), random.randint(0, 8))
+        empty_spots.add(spot)
+
+    empty_spots = list(empty_spots)
+
+    return empty_spots
+
+
+def make_blanks(sudoku, difficulty=3):
+    """
+    Removes spots from a filled sudoku for someone to work on
+    :param sudoku: full sudoku board (list of lists)
+    :param difficulty: How challenging the puzzle will be on a scale from 1 (easy) - 5 (evil) (int)
+    :return: sudoku board with blanks
+    """
+    empty_spots = pick_empty_spots(difficulty)
+
+    for spot in empty_spots:
+        row, col = spot
+        sudoku[row][col] = ' '
+
+    return sudoku
+
+
+def main():
+    grid = make_grid()
+    seed = puzzle_seed()
+    sudoku = make_sudoku_board(grid, seed)
+    for i in range(9):
+        if i % 3 == 0:
+            print('='*33)
+
+        print(f'|| {sudoku[i][0]}  {sudoku[i][1]}  {sudoku[i][2]} |'
+              f' {sudoku[i][3]}  {sudoku[i][4]}  {sudoku[i][5]} |'
+              f' {sudoku[i][6]}  {sudoku[i][7]}  {sudoku[i][8]} ||')
+    print('=' * 33)
+
+    print('\n')
+    thinned_sudoku = make_blanks(sudoku)
+    for i in range(9):
+        if i % 3 == 0:
+            print('='*33)
+
+        print(f'|| {thinned_sudoku[i][0]}  {thinned_sudoku[i][1]}  {thinned_sudoku[i][2]} |'
+              f' {thinned_sudoku[i][3]}  {thinned_sudoku[i][4]}  {thinned_sudoku[i][5]} |'
+              f' {thinned_sudoku[i][6]}  {thinned_sudoku[i][7]}  {thinned_sudoku[i][8]} ||')
+
+    print('=' * 33)
+
+
+if __name__ == '__main__':
+    main()
