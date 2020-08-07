@@ -1,6 +1,10 @@
 # Author: Dan Allen
-# Date: 
-# Description: 
+# Date: 8/7/2020
+# Description: Checks a sudoku instance for correctness
+
+
+import re
+import sys
 
 
 def get_sol_from_file(file):
@@ -10,7 +14,12 @@ def get_sol_from_file(file):
     :return: the solution in the form of a matrix (list of lists)
     """
     sol = []
+    with open(file, 'r') as fr:
+        for line in fr:
+            row = re.findall('[0-9]+', line)
+            sol.append(row)
 
+    sol = sol[1::2]
     return sol
 
 
@@ -20,9 +29,6 @@ def check_sudoku_sol(sol):
     :param sol: completed board (list of list)
     :return: if the solution is valid (bool)
     """
-    # determine the size of the sections
-    # side = int(math.sqrt(len(sol)))
-
     # check every spot on board
     for row in range(len(sol)):
         for column in range(len(sol[row])):
@@ -46,7 +52,11 @@ def main(file):
     sol = get_sol_from_file(file)
 
     if check_sudoku_sol(sol):
-        print("You did it!")
+        print("\nYou did it!\n")
 
     else:
-        print("Keep Trying!")
+        print("\nKeep Trying!\n")
+
+
+if __name__ == '__main__':
+    main(sys.argv[1])

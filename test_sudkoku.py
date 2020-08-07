@@ -1,11 +1,11 @@
 # Author: Dan Allen
-# Date: 
-# Description: Unittest for ___.py
+# Date: 8/7/2020
+# Description: Unittest for sudoku.py and check_sudoku.py
 
 
 import unittest
-from sudoku import works_in_spot, make_sudoku_board, puzzle_seed, make_grid
-from check_sudoku import check_sudoku_sol
+from sudoku import works_in_spot, make_sudoku_board, puzzle_seed, make_grid, puz_to_file, make_blanks
+from check_sudoku import check_sudoku_sol, get_sol_from_file
 
 
 class MyTestCase(unittest.TestCase):
@@ -57,11 +57,30 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(works_in_spot(sb2, 0, 0, 6))
 
     def test_board_gen(self):
-        for _ in range(100):
+        for _ in range(20):
             grid1 = make_grid()
             puz_seed = puzzle_seed()
             sudoku = make_sudoku_board(grid1, puz_seed)
             self.assertTrue(check_sudoku_sol(sudoku))
+
+    def test_file_io(self):
+        grid = make_grid()
+        seed = puzzle_seed()
+        sudoku = make_sudoku_board(grid, seed)
+        puz_to_file('sudoku_sol.txt', sudoku)
+        sudoku = make_blanks(sudoku)
+        puz_to_file('sudoku.txt', sudoku)
+        sol = get_sol_from_file('sudoku_sol.txt')
+        self.assertTrue(check_sudoku_sol(sol))
+
+    def test_rand_file_check(self):
+        for _ in range(20):
+            grid = make_grid()
+            seed = puzzle_seed()
+            sudoku = make_sudoku_board(grid, seed)
+            puz_to_file('sudoku_sol.txt', sudoku)
+            sol = get_sol_from_file('sudoku_sol.txt')
+            self.assertTrue(check_sudoku_sol(sol))
 
 
 if __name__ == '__main__':

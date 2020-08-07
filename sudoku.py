@@ -1,9 +1,10 @@
 # Author: Dan Allen
-# Date: 
-# Description: 
+# Date: 8/7/2020
+# Description: Generates a partially filled sudoku and solution
 
 
 import random
+import sys
 
 
 def make_grid():
@@ -117,31 +118,52 @@ def make_blanks(sudoku, difficulty=3):
     return sudoku
 
 
-def main():
+def puz_to_file(file, sudoku):
+    """
+    Outputs a sudoku to a file of the passed name
+    :param file: The name of the file to be written to or created (str)
+    :param sudoku: a sudoku solution or partially completed board (list of lists)
+    :return: None
+    """
+    with open(file, 'w') as fw:
+        for i in range(9):
+            if i % 3 == 0:
+                fw.write('=' * 33)
+
+            fw.write(f'\n|| {sudoku[i][0]}  {sudoku[i][1]}  {sudoku[i][2]} |'
+                     f' {sudoku[i][3]}  {sudoku[i][4]}  {sudoku[i][5]} |'
+                     f' {sudoku[i][6]}  {sudoku[i][7]}  {sudoku[i][8]} ||\n')
+        fw.write('=' * 33)
+
+
+def main(difficulty='3'):
+    # check that difficulty is a number
+    try:
+        difficulty = int(difficulty)
+    except ValueError:
+        difficulty = 3
+
+    # ensure difficulty is in range
+    if difficulty < 0 or difficulty > 5:
+        difficulty = 3
+
+    # generate a sudoku instance
     grid = make_grid()
     seed = puzzle_seed()
     sudoku = make_sudoku_board(grid, seed)
-    for i in range(9):
-        if i % 3 == 0:
-            print('='*33)
 
-        print(f'|| {sudoku[i][0]}  {sudoku[i][1]}  {sudoku[i][2]} |'
-              f' {sudoku[i][3]}  {sudoku[i][4]}  {sudoku[i][5]} |'
-              f' {sudoku[i][6]}  {sudoku[i][7]}  {sudoku[i][8]} ||')
-    print('=' * 33)
+    # output solution to a file
+    puz_to_file('sudoku_sol.txt', sudoku)
 
-    print('\n')
-    thinned_sudoku = make_blanks(sudoku)
-    for i in range(9):
-        if i % 3 == 0:
-            print('='*33)
-
-        print(f'|| {thinned_sudoku[i][0]}  {thinned_sudoku[i][1]}  {thinned_sudoku[i][2]} |'
-              f' {thinned_sudoku[i][3]}  {thinned_sudoku[i][4]}  {thinned_sudoku[i][5]} |'
-              f' {thinned_sudoku[i][6]}  {thinned_sudoku[i][7]}  {thinned_sudoku[i][8]} ||')
-
-    print('=' * 33)
+    # make a puzzle with blanks
+    thinned_sudoku = make_blanks(sudoku, difficulty)
+    # output puzzle to file
+    puz_to_file('sudoku.txt', thinned_sudoku)
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+
+    else:
+        main()
