@@ -49,7 +49,7 @@ def works_in_spot(grid, row, col, digit):
 
 def make_sudoku_board(grid, seed, sudoku=None):
     """
-    Fills a sudoku board with a completed solution
+    Fills a sudoku board with a completed solution (modeled from Ajinkya Sonawane's solution on Medium's Daily Python)
     :param grid: a partially filled board (list of lists)
     :param seed: possible values for each spot on the grid (list)
     :param sudoku: variable for the completed sudoku
